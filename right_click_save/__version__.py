@@ -1,0 +1,7 @@
+__author__ = "ecaz.eth"
+__author_email__ = "me@ecaz.xyz"
+__description__ = "NFT metadata retriever."
+__license__ = "Apache 2.0"
+__title__ = "right_click_save"
+__url__ = "https://github.com/ecaz-eth/right-click-save"
+__version__ = "0.1.0"
