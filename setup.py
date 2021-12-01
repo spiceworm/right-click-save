@@ -38,6 +38,9 @@ setup(
     install_requires=requires,
     license=about["__license__"],
     python_requires=">=3.10",
+    entry_points={
+        "console_scripts": ["right-click-save = right_click_save.__main__:main"]
+    },
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
