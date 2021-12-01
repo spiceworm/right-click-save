@@ -9,26 +9,37 @@ for token in right_click_save.get('<ETH-address>', 'ENS-domain'):
     print(token.meta_data['name'])
 ```
 ### Development Environment
-#### Create executable
+#### Create executable at /usr/local/bin/right-click-save
 ```bash
-$ cat << EOF >> /usr/local/bin/right-click-save
 #!/usr/bin/env bash
 
 set -e
 
 NAME=right-click-save
+REPO_PATH=/<change-this-to-local-repo-root-directory>/
 
-pushd /path/to/repo/$NAME/ > /dev/null
+pushd $REPO_PATH > /dev/null
 
-# Build image if any changes have been made to the source code
-docker build . -t $NAME &> /dev/null
+# Capture version defined in source code
+VERSION=$(
+python << SCRIPT
+d = {}
+with open('pkg/right_click_save/__version__.py') as f:
+    exec(f.read(), d)
+print(d['__version__'])
+SCRIPT
+)
+
+# Build and tag image
+docker build . -t $NAME:$VERSION &> /dev/null
+docker tag $NAME:$VERSION $NAME:latest
 
 # Run container
-docker run --rm -it $NAME "$@"
+docker run --rm -it $NAME:$VERSION "$@"
 
 popd > /dev/null
-EOF
-
+```
+```bash
 $ chown $USER:USER /usr/local/bin/right-click-save
 $ chmod +x /usr/local/bin/right-click-save
 ```
