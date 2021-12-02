@@ -26,17 +26,22 @@ class Token:
         data = the_graph.query_erc721(address)
         for account in data["accounts"]:
             for erc721_token in account["tokens"]:
-                token_address, token_id = erc721_token["id"].split("-")
+                token_address, token_id_hash = erc721_token["id"].split("-")
 
                 try:
                     # ERC-721 NFT with metadata that contains or points to an image / video.
                     if token_uri := erc721_token["uri"]:
                         metadata = utils.extract_erc721_metadata(token_uri)
-                        yield cls(token_address, token_id, metadata, erc721_token)
+                        yield cls(token_address, token_id_hash, metadata, erc721_token)
                     elif token_address == addresses.ENS:
-                        domain = the_graph.query_ens_by_labelhash(token_id)
+                        domain = the_graph.query_ens_by_labelhash(token_id_hash)
                         metadata = {"name": domain}
-                        yield cls(token_address, token_id, metadata, erc721_token)
+                        yield cls(token_address, token_id_hash, metadata, erc721_token)
+                    elif token_address == addresses.DecentralandENS:
+                        token_id = int(token_id_hash, 16)
+                        name = the_graph.query_decentraland_by_token_id(token_id)
+                        metadata = {"name": name}
+                        yield cls(token_address, token_id_hash, metadata, erc721_token)
                     else:
                         log.warning("Unhandled project at %s", token_address)
                 except TheGraphQueryError as e:

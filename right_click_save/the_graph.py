@@ -16,6 +16,24 @@ def _query(q, subgraph):
     return resp["data"]
 
 
+def query_decentraland_by_token_id(token_id, subgraph=subgraphs.DECENTRALAND):
+    q = f"""
+    {{
+      nfts(where: {{tokenId: "{token_id}"}}) {{
+        name
+      }}
+    }}
+    """
+    try:
+        data = _query(q, subgraph)
+    except TheGraphQueryError as e:
+        raise ENSLookupError(e)
+    else:
+        if domains := data["nfts"]:
+            return domains[0]["name"]
+        return None
+
+
 def query_ens_by_domain(domain, subgraph=subgraphs.ENS):
     q = f"""
     {{
