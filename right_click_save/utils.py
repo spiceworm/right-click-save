@@ -112,6 +112,6 @@ def resolve_addresses(*addresses):
     for address in addresses:
         if web3.Web3.isAddress(address):
             retval.add(address)
-        if retrieved_address := the_graph.query_ens(address):
+        if retrieved_address := the_graph.query_ens_by_domain(address):
             retval.add(retrieved_address)
     return retval

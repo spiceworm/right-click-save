@@ -18,7 +18,7 @@ def _query(q, subgraph):
     return resp["data"]
 
 
-def query_ens(domain, subgraph=ENS_SUBGRAPH):
+def query_ens_by_domain(domain, subgraph=ENS_SUBGRAPH):
     q = f"""
     {{
       domains(where: {{name: "{domain}"}}) {{
@@ -31,6 +31,20 @@ def query_ens(domain, subgraph=ENS_SUBGRAPH):
     data = _query(q, subgraph)
     if domains := data["domains"]:
         return domains[0]["owner"]["id"]
+    return None
+
+
+def query_ens_by_labelhash(labelhash, subgraph=ENS_SUBGRAPH):
+    q = f"""
+    {{
+      domains(where: {{labelhash: "{labelhash}"}}) {{
+        name
+      }}
+    }}
+    """
+    data = _query(q, subgraph)
+    if domains := data["domains"]:
+        return domains[0]["name"]
     return None
 
 
