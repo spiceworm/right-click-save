@@ -1,16 +1,12 @@
 import requests
 
+from .constants import subgraphs
 from .exceptions import ENSLookupError, TheGraphQueryError
-
-
-BASE_URL = "https://api.thegraph.com"
-ENS_SUBGRAPH = "ensdomains/ens"
-ERC721_SUBGRAPH = "amxx/eip721-subgraph"
 
 
 def _query(q, subgraph):
     r = requests.post(
-        f"{BASE_URL}/subgraphs/name/{subgraph}",
+        f"{subgraphs.BASE_URL}/subgraphs/name/{subgraph}",
         json={"query": q},
     )
     r.raise_for_status()
@@ -20,7 +16,7 @@ def _query(q, subgraph):
     return resp["data"]
 
 
-def query_ens_by_domain(domain, subgraph=ENS_SUBGRAPH):
+def query_ens_by_domain(domain, subgraph=subgraphs.ENS):
     q = f"""
     {{
       domains(where: {{name: "{domain}"}}) {{
@@ -40,7 +36,7 @@ def query_ens_by_domain(domain, subgraph=ENS_SUBGRAPH):
         return None
 
 
-def query_ens_by_labelhash(labelhash, subgraph=ENS_SUBGRAPH):
+def query_ens_by_labelhash(labelhash, subgraph=subgraphs.ENS):
     q = f"""
     {{
       domains(where: {{labelhash: "{labelhash}"}}) {{
@@ -58,7 +54,7 @@ def query_ens_by_labelhash(labelhash, subgraph=ENS_SUBGRAPH):
         return None
 
 
-def query_erc721(address, subgraph=ERC721_SUBGRAPH):
+def query_erc721(address, subgraph=subgraphs.ERC721):
     q = f"""
     {{
       accounts(where: {{id: "{address}"}}) {{

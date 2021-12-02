@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 import os
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
-
-packages = ["right_click_save"]
 
 requires = [
     "click>=8.0.3",
@@ -32,7 +30,7 @@ setup(
     author=about["__author__"],
     author_email=about["__author_email__"],
     url=about["__url__"],
-    packages=packages,
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,

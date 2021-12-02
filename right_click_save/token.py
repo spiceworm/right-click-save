@@ -1,6 +1,7 @@
 import logging
 
 from . import the_graph, utils
+from .constants import addresses
 from .exceptions import TheGraphQueryError
 
 
@@ -32,8 +33,7 @@ class Token:
                     if token_uri := erc721_token["uri"]:
                         metadata = utils.extract_erc721_metadata(token_uri)
                         yield cls(token_address, token_id, metadata, erc721_token)
-                    # ENS
-                    elif token_address == "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85":
+                    elif token_address == addresses.ENS:
                         domain = the_graph.query_ens_by_labelhash(token_id)
                         metadata = {"name": domain}
                         yield cls(token_address, token_id, metadata, erc721_token)
