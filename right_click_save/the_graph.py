@@ -1,5 +1,7 @@
 import requests
 
+from .exceptions import ENSLookupError, TheGraphQueryError
+
 
 BASE_URL = "https://api.thegraph.com"
 ENS_SUBGRAPH = "ensdomains/ens"
@@ -14,7 +16,7 @@ def _query(q, subgraph):
     r.raise_for_status()
     resp = r.json()
     if "errors" in resp:
-        raise Exception(resp["errors"])
+        raise TheGraphQueryError(resp["errors"])
     return resp["data"]
 
 
@@ -28,10 +30,14 @@ def query_ens_by_domain(domain, subgraph=ENS_SUBGRAPH):
       }}
     }}
     """
-    data = _query(q, subgraph)
-    if domains := data["domains"]:
-        return domains[0]["owner"]["id"]
-    return None
+    try:
+        data = _query(q, subgraph)
+    except TheGraphQueryError as e:
+        raise ENSLookupError(e)
+    else:
+        if domains := data["domains"]:
+            return domains[0]["owner"]["id"]
+        return None
 
 
 def query_ens_by_labelhash(labelhash, subgraph=ENS_SUBGRAPH):
@@ -42,10 +48,14 @@ def query_ens_by_labelhash(labelhash, subgraph=ENS_SUBGRAPH):
       }}
     }}
     """
-    data = _query(q, subgraph)
-    if domains := data["domains"]:
-        return domains[0]["name"]
-    return None
+    try:
+        data = _query(q, subgraph)
+    except TheGraphQueryError as e:
+        raise ENSLookupError(e)
+    else:
+        if domains := data["domains"]:
+            return domains[0]["name"]
+        return None
 
 
 def query_erc721(address, subgraph=ERC721_SUBGRAPH):
@@ -59,4 +69,7 @@ def query_erc721(address, subgraph=ERC721_SUBGRAPH):
       }}
     }}
     """
-    return _query(q, subgraph)
+    try:
+        return _query(q, subgraph)
+    except TheGraphQueryError as e:
+        raise ENSLookupError(e)
