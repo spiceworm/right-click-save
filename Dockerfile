@@ -2,9 +2,9 @@ FROM python:3.10.0
 
 WORKDIR /app
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip && pip install tox
 
-COPY pkg/ README.md /app/
+COPY . /app/
 
 RUN pip install .
 

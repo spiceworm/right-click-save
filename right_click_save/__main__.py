@@ -1,6 +1,11 @@
+import logging
+
 import click
 
 from . import utils
+
+
+log = logging.getLogger(__name__)
 
 
 class EthereumAddress(click.types.StringParamType):
@@ -18,9 +23,16 @@ class EthereumAddress(click.types.StringParamType):
 
 @click.command()
 @click.argument("addresses", required=True, nargs=-1, type=EthereumAddress())
-def main(addresses):
+@click.option("-v", "--verbose", is_flag=True)
+def main(addresses, verbose):
+    if verbose:
+        logging.basicConfig()
+    else:
+        logging.disable(logging.CRITICAL)
+
     for token in utils.get_tokens(*addresses):
-        click.echo(f'   {token.meta_data["name"]}')
+        if token_project_name := token.metadata.get("name"):
+            click.echo(f"   {token_project_name}")
 
 
 if __name__ == "__main__":

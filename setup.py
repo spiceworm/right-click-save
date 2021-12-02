@@ -3,13 +3,13 @@ import os
 
 from setuptools import setup
 
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 packages = ["right_click_save"]
 
 requires = [
     "click>=8.0.3",
+    "PyYAML>=6.0",
     "requests>=2.26.0",
     "web3>=5.25.0",
 ]

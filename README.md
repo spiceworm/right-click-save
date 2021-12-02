@@ -5,11 +5,22 @@
 import right_click_save
 
 for token in right_click_save.get('<ETH-address>', 'ENS-domain'):
-    print(token.meta_data)
-    print(token.meta_data['name'])
+    print(token.metadata)
+    print(token.metadata['name'])
 ```
-### Development Environment
-#### Create executable at /usr/local/bin/right-click-save
+### Development Environments
+#### virtualenv
+Using a virtual environment is more convenient for development because dependencies
+do not need to be re-installed each time the source code changes as is the case with
+the docker environment.
+```bash
+$ virtualenv -p python3.10 ~/venv/right-click-save
+$ . ~/venv/right-click-save/bin/activate
+$ pip install -e /path/to/right-click-save
+$ right-click-save --help
+```
+#### docker
+Copy this to /usr/local/bin/right-click-save
 ```bash
 #!/usr/bin/env bash
 
@@ -24,7 +35,7 @@ pushd $REPO_PATH > /dev/null
 VERSION=$(
 python << SCRIPT
 d = {}
-with open('pkg/right_click_save/__version__.py') as f:
+with open('right_click_save/__version__.py') as f:
     exec(f.read(), d)
 print(d['__version__'])
 SCRIPT
@@ -49,8 +60,6 @@ $ right-click-save <ETH-address> [<ETH-address>] [<ENS-domain>]
 ```
 
 ## TODO
-* For some reason the erc721 subgraph is not including ENS NFTs
-  * `right-click-save <ENS-domain>` does not retrieve tokens for ENS domain but DOES get other NFTs
 * Add interactive mode where you can choose which of the NFTs to actually save to disk
 * Save NFT image/mp4/metadata to file
   * display image/mp4/metadata in terminal?

@@ -2,6 +2,8 @@ import requests
 
 
 BASE_URL = "https://api.thegraph.com"
+ENS_SUBGRAPH = "ensdomains/ens"
+ERC721_SUBGRAPH = "amxx/eip721-subgraph"
 
 
 def _query(q, subgraph):
@@ -16,7 +18,7 @@ def _query(q, subgraph):
     return resp["data"]
 
 
-def query_ens(domain, subgraph="ensdomains/ens"):
+def query_ens(domain, subgraph=ENS_SUBGRAPH):
     q = f"""
     {{
       domains(where: {{name: "{domain}"}}) {{
@@ -32,7 +34,7 @@ def query_ens(domain, subgraph="ensdomains/ens"):
     return None
 
 
-def query_erc721(address, subgraph="amxx/eip721-subgraph"):
+def query_erc721(address, subgraph=ERC721_SUBGRAPH):
     q = f"""
     {{
       accounts(where: {{id: "{address}"}}) {{
