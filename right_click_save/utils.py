@@ -68,26 +68,30 @@ def extract_erc721_metadata(token_uri):
         """
         Only call this function for a URI that contains on-chain data.
         """
-        content_type_, remainder_ = token_uri_.split(";", 1)
-
-        if "application/json" in content_type_:
-            encoding_, onchain_data_ = remainder_.split(",", 1)
-            if encoding_ == "utf8":
-                metadata_ = json.loads(onchain_data_)
-            elif encoding_ == "base64":
-                encoded_data_ = base64.b64decode(onchain_data_)
-                decoded_data_ = encoded_data_.decode(encoding="utf-8")
-                metadata_ = json.loads(decoded_data_)
+        try:
+            content_type_, remainder_ = token_uri_.split(";", 1)
+        except ValueError:
+            log.error('Unhandled token URI "%s"', token_uri_)
+            metadata_ = {}
+        else:
+            if "application/json" in content_type_:
+                encoding_, onchain_data_ = remainder_.split(",", 1)
+                if encoding_ == "utf8":
+                    metadata_ = json.loads(onchain_data_)
+                elif encoding_ == "base64":
+                    encoded_data_ = base64.b64decode(onchain_data_)
+                    decoded_data_ = encoded_data_.decode(encoding="utf-8")
+                    metadata_ = json.loads(decoded_data_)
+                else:
+                    log.error(
+                        'Unhandled encoding "%s" detected for %s', encoding_, token_uri_
+                    )
+                    metadata_ = {}
             else:
                 log.error(
-                    'Unhandled encoding "%s" detected for %s', encoding_, token_uri_
+                    'Unhandled content-type "%s" detected for %s', content_type_, token_uri_
                 )
                 metadata_ = {}
-        else:
-            log.error(
-                'Unhandled content-type "%s" detected for %s', content_type_, token_uri_
-            )
-            metadata_ = {}
         return metadata_
 
     data_url = token_uri.split(",", 1)[-1]
