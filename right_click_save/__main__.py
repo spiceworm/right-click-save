@@ -32,7 +32,9 @@ def main(addresses, verbose):
 
     for token in utils.get_tokens(*addresses):
         if token_project_name := token.metadata.get("name"):
-            click.echo(f"   {token_project_name}")
+            click.echo(f"{token.category} - {token_project_name}")
+        else:
+            log.warning(f"No project name for {token.metadata}")
 
 
 if __name__ == "__main__":
